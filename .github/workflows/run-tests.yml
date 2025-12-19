@@ -1,1 +1,34 @@
+name: Run Selenium Tests
 
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 'latest'
+
+      - name: Install dependencies
+        run: |
+          if [ -f requirements.txt ]; then
+            echo "Installing dependencies from requirements.txt"
+            pip install -r requirements.txt
+          else
+            echo "requirements.txt not found. Installing default dependencies."
+            pip install selenium webdriver-manager
+
+      - name: Run Selenium test script
+        run: python test_script.py
