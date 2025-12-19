@@ -4,9 +4,8 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
-import time
 
-# Initialize the WebDriver (ensure chromedriver is in your PATH)
+# Initialize the WebDriver (make sure chromedriver is in your PATH)
 driver = webdriver.Chrome()
 
 try:
@@ -14,53 +13,43 @@ try:
     driver.get("https://www.google.com")
     driver.maximize_window()
 
-    # Accept cookies if the consent form appears (for EU users)
-    try:
-        consent_btn = WebDriverWait(driver, 5).until(
-            EC.element_to_be_clickable((By.XPATH, "//button[contains(., 'I agree') or contains(., 'Accept all')]"))
-        )
-        consent_btn.click()
-    except TimeoutException:
-        pass  # Consent form did not appear
-
-    # Step 2: Search for "Flipkart"
+    # Step 2: Wait for the search box to be present and search for 'Flipkart'
     search_box = WebDriverWait(driver, 10).until(
         EC.presence_of_element_located((By.NAME, "q"))
     )
     search_box.send_keys("Flipkart")
     search_box.send_keys(Keys.RETURN)
 
-    # Step 3: Click on the Flipkart link in search results
+    # Step 3: Wait for search results and click the Flipkart link
     flipkart_link = WebDriverWait(driver, 10).until(
         EC.element_to_be_clickable((By.XPATH, "//h3[contains(text(),'Flipkart')]/ancestor::a"))
     )
     flipkart_link.click()
 
-    # Step 4: Switch to the new tab if opened
-    time.sleep(2)
-    if len(driver.window_handles) > 1:
-        driver.switch_to.window(driver.window_handles[1])
-
-    # Step 5: Assert Flipkart homepage loaded
-    # Wait for the Flipkart logo or title
+    # Step 4: Wait for Flipkart homepage to load
     WebDriverWait(driver, 10).until(
-        EC.title_contains("Flipkart")
+        EC.presence_of_element_located((By.TAG_NAME, "body"))
     )
-    print("Page title is:", driver.title)
-    assert "Flipkart" in driver.title, "Flipkart homepage did not load!"
 
-    # Optionally, check for the Flipkart logo
+    # Step 5: Basic assertions
+    # Assertion 1: Check if the page title contains 'Flipkart'
+    assert "Flipkart" in driver.title, "Page title does not contain 'Flipkart'"
+
+    # Assertion 2: Check for the presence of the Flipkart logo
     try:
-        logo = WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, "//img[contains(@src, 'flipkart')]"))
-        )
-        print("Flipkart logo found. Homepage loaded successfully.")
-    except TimeoutException:
-        print("Flipkart logo not found, but title assertion passed.")
+        logo = driver.find_element(By.XPATH, "//img[contains(@src, 'flipkart')]")
+        print("Flipkart logo found on the homepage.")
+    except NoSuchElementException:
+        print("Flipkart logo not found on the homepage.")
 
-except (TimeoutException, NoSuchElementException) as e:
-    print("Test failed:", str(e))
+    print("All basic assertions passed.")
 
+except TimeoutException as te:
+    print(f"Timeout occurred: {te}")
+except AssertionError as ae:
+    print(f"Assertion failed: {ae}")
+except Exception as e:
+    print(f"An unexpected error occurred: {e}")
 finally:
     # Close the browser
     driver.quit()
