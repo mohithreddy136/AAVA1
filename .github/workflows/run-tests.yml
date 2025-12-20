@@ -32,4 +32,4 @@ jobs:
           fi
 
       - name: Run Selenium Tests
-        run: python test_script.py
+        run: python test.py
