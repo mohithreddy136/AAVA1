@@ -34,7 +34,7 @@ print(f"url:{driver.current_url}")
 driver.back()
 print(f"title:{driver.title}")
 print(f"url:{driver.current_url}")
-links=driver.find_elements(BY.TAG_NAME,"a")
+links=driver.find_elements(By.TAG_NAME,"a")
 for link in links:
     print(link)
 
