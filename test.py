@@ -21,4 +21,14 @@ driver = webdriver.Chrome(
     options=options
 )
 driver.get("https://www.google.com")
-print(f"title:{driver.current_url}")
+print(f"title:{driver.title}")
+print(f"url:{driver.current_url}")
+driver.maximize_window()
+time.sleep(2)
+driver.set_window_size(300,500)
+time.sleep(2)
+driver.get("https://www.chatgpt.com")
+print(f"title:{driver.title}")
+print(f"url:{driver.current_url}")
+
+
