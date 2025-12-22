@@ -39,6 +39,6 @@ for link in links:
     text=link.text.strip()
     href=link.get_attribute("href")
     
-    print(f"{text}:>{href})
+    print(f"{text}:>{href}")
 
 
