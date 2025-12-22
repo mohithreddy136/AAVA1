@@ -31,5 +31,11 @@ time.sleep(2)
 driver.get("https://www.chatgpt.com")
 print(f"title:{driver.title}")
 print(f"url:{driver.current_url}")
+driver.back()
+print(f"title:{driver.title}")
+print(f"url:{driver.current_url}")
+links=driver.find_elements(BY.TAG_NAME,"a")
+for link in links:
+    print(link)
 
 
