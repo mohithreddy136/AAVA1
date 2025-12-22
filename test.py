@@ -36,6 +36,9 @@ print(f"title:{driver.title}")
 print(f"url:{driver.current_url}")
 links=driver.find_elements(By.TAG_NAME,"a")
 for link in links:
-    print(link)
+    text=link.text.strip()
+    href=link.get_attribute("href")
+    
+    print(f"{text}:>{href})
 
 
