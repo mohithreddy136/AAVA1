@@ -1,35 +1,32 @@
-name: Selenium Automated Tests
+name: Selenium Tests
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
-  run-selenium-tests:
-    name: Run Selenium Tests
+  test:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set Up Python 3.11
+      - name: Set up Python 3.11
         uses: actions/setup-python@v4
         with:
-          python-version: 3.11
+          python-version: '3.11'
 
       - name: Install dependencies
         run: |
           if [ -f requirements.txt ]; then
-            echo "requirements.txt found. Installing dependencies from requirements.txt..."
             pip install -r requirements.txt
+            echo "requirements.txt was used"
           else
-            echo "requirements.txt not found. Installing selenium and webdriver-manager..."
             pip install selenium webdriver-manager
+            echo "default dependencies were installed"
           fi
 
-      - name: Run Selenium Tests
+      - name: Run Selenium tests
         run: python test_script.py
