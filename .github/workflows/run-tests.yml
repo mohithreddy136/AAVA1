@@ -1,13 +1,16 @@
-name: Selenium Test Workflow
+name: Run Selenium Tests
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
   pull_request:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
-  run-selenium-tests:
+  selenium-tests:
+    name: Selenium Automated Tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -24,8 +27,8 @@ jobs:
             echo "requirements.txt found. Installing dependencies from requirements.txt."
             pip install -r requirements.txt
           else
-            echo "requirements.txt not found. Installing default dependencies: selenium and webdriver-manager."
+            echo "requirements.txt not found. Installing default dependencies: selenium, webdriver-manager."
             pip install selenium webdriver-manager
-
+          
       - name: Run Selenium Tests
         run: python test_script.py
