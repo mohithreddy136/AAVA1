@@ -47,7 +47,7 @@ def main():
         suggestions_box = WebDriverWait(driver, 10).until(
             EC.visibility_of_element_located((By.CSS_SELECTOR, "ul[role='listbox']"))
         )
-        driver.save_screenshot("hello.png")
+        driver.save_screenshot("screenshots/hello.png")
         suggestions = suggestions_box.find_elements(By.CSS_SELECTOR, "li span")
         print(f"Number of search suggestions: {len(suggestions)}")
 
