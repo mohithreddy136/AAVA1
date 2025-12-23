@@ -36,7 +36,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: selenium-screenshots
-          path: "*.png"
+          path: screenshots/
 
 
       - name: Run Selenium Tests
