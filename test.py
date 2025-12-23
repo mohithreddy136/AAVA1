@@ -1,44 +1,4 @@
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-import time
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service
-from selenium.common.exceptions import TimeoutException
-from webdriver_manager.chrome import ChromeDriverManager
-
-# -------------------------------
-# Headless Chrome for CI
-# -------------------------------
-options = Options()
-options.add_argument("--headless=new")
-options.add_argument("--no-sandbox")
-options.add_argument("--disable-dev-shm-usage")
-options.add_argument("--window-size=1920,1080")
-
-driver = webdriver.Chrome(
-    service=Service(ChromeDriverManager().install()),
-    options=options
-)
-driver.get("https://www.google.com")
-print(f"title:{driver.title}")
-print(f"url:{driver.current_url}")
-driver.maximize_window()
-time.sleep(2)
-driver.set_window_size(300,500)
-time.sleep(2)
-driver.get("https://www.chatgpt.com")
-print(f"title:{driver.title}")
-print(f"url:{driver.current_url}")
-driver.back()
-print(f"title:{driver.title}")
-print(f"url:{driver.current_url}")
-links=driver.find_elements(By.TAG_NAME,"a")
-for link in links:
-    text=link.text.strip()
-    href=link.get_attribute("href")
-    
-    print(f"{text}:>{href}")
-
-
+print(3+5)
+a=6
+b=8
+print(a*b)
