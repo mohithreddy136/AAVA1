@@ -1,15 +1,16 @@
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
 import os
 from datetime import datetime
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+from selenium.common.exceptions import TimeoutException
+from webdriver_manager.chrome import ChromeDriverManager
 
-
+# Function to take screenshots after each step
 def take_screenshot(driver, action_name):
     os.makedirs("screenshots", exist_ok=True)
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -17,80 +18,68 @@ def take_screenshot(driver, action_name):
     driver.save_screenshot(filename)
     print(f"Screenshot saved: {filename}")
 
+# -------------------------------
+# Headless Chrome for CI
+# -------------------------------
+options = Options()
+options.add_argument("--headless=new")
+options.add_argument("--no-sandbox")
+options.add_argument("--disable-dev-shm-usage")
+options.add_argument("--window-size=1920,1080")
 
-def main():
-    # -------------------------------
-    # Headless Chrome for CI
-    # -------------------------------
-    options = Options()
-    options.add_argument("--headless=new")
-    options.add_argument("--no-sandbox")
-    options.add_argument("--disable-dev-shm-usage")
-    options.add_argument("--window-size=1920,1080")
+driver = webdriver.Chrome(
+    service=Service(ChromeDriverManager().install()),
+    options=options
+)
 
-    driver = webdriver.Chrome(
-        service=Service(ChromeDriverManager().install()),
-        options=options
-    )
+wait = WebDriverWait(driver, 10)
 
-    try:
-        # Step 1: Navigate to Google
-        driver.get("https://www.google.com")
-        take_screenshot(driver, "01_google_home")
+try:
+    # Step 1: Open Google
+    driver.get("https://www.google.com")
+    take_screenshot(driver, "open_google")
 
-        # Accept cookies if the consent form appears
-        try:
-            consent_button = WebDriverWait(driver, 5).until(
-                EC.element_to_be_clickable((
-                    By.XPATH,
-                    "//button[.//div[text()='I agree'] or .//div[text()='Accept all']]"
-                ))
-            )
-            consent_button.click()
-            take_screenshot(driver, "02_cookie_accepted")
-        except TimeoutException:
-            take_screenshot(driver, "02_cookie_not_shown")
+    # Step 2: Locate the search box and type 'pen'
+    search_box = wait.until(EC.presence_of_element_located((By.NAME, "q")))
+    search_box.clear()
+    search_box.send_keys("pen")
+    take_screenshot(driver, "typed_pen")
 
-        # Step 2: Search for "selenium"
-        search_box = WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.NAME, "q"))
-        )
-        search_box.send_keys("selenium")
-        take_screenshot(driver, "03_search_typed")
+    # Step 3: Wait for suggestions to appear and count them
+    suggestions_box = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "ul[role='listbox']")))
+    suggestions = suggestions_box.find_elements(By.CSS_SELECTOR, "li span")
+    print(f"Number of suggestions: {len(suggestions)}")
+    take_screenshot(driver, "suggestions_list")
 
-        # Step 3: Suggestions
-        suggestions_box = WebDriverWait(driver, 10).until(
-            EC.visibility_of_element_located((By.CSS_SELECTOR, "ul[role='listbox']"))
-        )
-        suggestions = suggestions_box.find_elements(By.CSS_SELECTOR, "li span")
-        print(f"Number of search suggestions: {len(suggestions)}")
-        take_screenshot(driver, "04_suggestions_visible")
+    # Step 4: Press Enter to search for 'pen'
+    search_box.send_keys(Keys.RETURN)
+    wait.until(EC.title_contains("pen"))
+    take_screenshot(driver, "search_results")
 
-        # Step 4: Click first suggestion
-        if suggestions:
-            suggestions[0].click()
-            take_screenshot(driver, "05_first_suggestion_clicked")
-        else:
-            print("No suggestions found.")
-            take_screenshot(driver, "05_no_suggestions")
-            return
+    # Step 5: Wait for search results and open the second link
+    results = wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "div#search a")))
+    # Filter out any links that are not visible or are advertisements
+    valid_results = [a for a in results if a.is_displayed() and a.get_attribute("href")]
+    if len(valid_results) < 2:
+        raise Exception("Less than 2 search results found.")
+    second_link = valid_results[1]
+    second_link_url = second_link.get_attribute("href")
+    second_link.click()
+    take_screenshot(driver, "open_second_link")
 
-        # Step 5: Results page loaded
-        WebDriverWait(driver, 10).until(
-            EC.title_contains("selenium")
-        )
-        take_screenshot(driver, "06_results_page")
-        print(f"Page Title: {driver.title}")
-        print(f"Page URL: {driver.current_url}")
+    # Step 6: Switch to new tab if opened, else stay on the same page
+    if len(driver.window_handles) > 1:
+        driver.switch_to.window(driver.window_handles[1])
 
-    except TimeoutException as e:
-        take_screenshot(driver, "error_timeout")
-        print(f"An element was not found within the timeout period: {e}")
+    # Step 7: Print the page title and URL
+    wait.until(lambda d: d.title != "")
+    print(f"Page Title: {driver.title}")
+    print(f"Page URL: {driver.current_url}")
+    take_screenshot(driver, "second_link_page")
 
-    finally:
-        driver.quit()
-
-
-if __name__ == "__main__":
-    main()
-
+except TimeoutException as e:
+    print(f"Timeout occurred: {e}")
+except Exception as ex:
+    print(f"An error occurred: {ex}")
+finally:
+    driver.quit()
