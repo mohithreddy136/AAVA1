@@ -16,7 +16,12 @@ def take_screenshot(driver, action_name):
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     filename = f"screenshots/{action_name}_{timestamp}.png"
     driver.save_screenshot(filename)
-
+    with open(filename, "rb") as f:
+        allure.attach(
+            f.read(),
+            name=action_name,
+            attachment_type=allure.attachment_type.PNG
+        )
 @pytest.fixture(scope="function")
 def driver():
     options = Options()
