@@ -59,6 +59,11 @@ jobs:
       - name: Generate Allure Report
         run: |
           allure generate allure-results --clean -o allure-report
+      - name: Prepare Allure Report for GitHub Pages
+        run: |
+          touch allure-report/.nojekyll
+          ls -la allure-report
+
 
       - name: Upload Allure Report Artifact
         if: always()
