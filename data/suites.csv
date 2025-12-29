@@ -1,3 +1,2 @@
 "Status","Start Time","Stop Time","Duration in ms","Parent Suite","Suite","Sub Suite","Test Class","Test Method","Name","Description"
-"failed","Mon Dec 29 10:52:43 UTC 2025","Mon Dec 29 10:52:44 UTC 2025","504","","test_script","","","","test_google_title_fail",""
-"passed","Mon Dec 29 10:52:41 UTC 2025","Mon Dec 29 10:52:43 UTC 2025","1919","","test_script","","","","test_google_title_pass",""
+"broken","Mon Dec 29 11:02:01 UTC 2025","Mon Dec 29 11:02:24 UTC 2025","23661","","test_script","","","","test_google_search_and_navigation",""
