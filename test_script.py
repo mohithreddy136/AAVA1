@@ -38,7 +38,7 @@ def wait(driver):
 def accept_google_consent_if_present(driver, wait):
     try:
         consent_button = wait.until(
-            EC.element_to_be_clickable((By.XPATH, "//button[contains(., 'I agree') or contains(., 'Accept all')]")
+            EC.element_to_be_clickable((By.XPATH, "//button[contains(., 'I agree') or contains(., 'Accept all')]"))
         )
         consent_button.click()
         take_screenshot(driver, "accept_cookies")
