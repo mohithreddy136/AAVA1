@@ -56,7 +56,7 @@ def test_open_google(driver, wait):
 def test_open_facebook(driver, wait):
     driver.get("https://www.facebook.com")
     take_screenshot(driver, "open_facebook")
-    assert "Facebook" in driver.title or "Facebook" in driver.page_source
+    assert "Facebok" in driver.title or "Facebok" in driver.page_source
 
 def test_back_to_google(driver, wait):
     driver.get("https://www.google.com")
