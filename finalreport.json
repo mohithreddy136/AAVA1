@@ -275,5 +275,14 @@
       "data_lineage": "Source: regression2.txt, Destination: finalreport.json in repo https://github.com/mohithreddy136/AAVA1",
       "consent_status": "N/A (no user data processed), operation logged for audit"
     }
+  },
+  {
+    "regression1.txt": {
+      "test_name": null,
+      "status": null,
+      "timestamp": null,
+      "environment": null,
+      "error_signature": null
+    }
   }
 ]
